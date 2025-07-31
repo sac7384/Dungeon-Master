@@ -1,2 +1,4 @@
 # Dungeon-Master
-My second simple RPG game
+My second simple RPG game which had the same name as the first one I created. I worked on this version near the end of 2020 for almost two months. It is still very unfinished but has many more complete systems than the older dungeon game. The battle system is more fleshed out, there is a set of six skill trees with unique abilities, an inventory system and items, a quest system with a handful of quests, and a couple areas to explore. With this project I never made it far past the mechanics I wanted to implement and into actual game content but there is still enough created to make the game playable. It is also interesting to look back at my old writing and code and see how much I've improved since.
+
+The game is played entirely in the command line. To run the game you simply need to run "java DungeonMaster.java" in the directory with all your files
