@@ -1,0 +1,40 @@
+import java.io.*;
+
+public class FileSaver {
+  public void save(Player p){
+    try {
+    FileOutputStream fileOut = new FileOutputStream("DMsave.ser");
+    ObjectOutputStream out = new ObjectOutputStream(fileOut);
+    out.writeObject(p);
+    out.close();
+    fileOut.close();
+    System.out.println("File Saved!");
+    }
+    
+    catch (IOException i) {
+         i.printStackTrace();
+    }
+  }
+  
+  public Player load(){
+    Player p=new Player("");
+    try {
+         FileInputStream fileIn = new FileInputStream("DMsave.ser");
+         ObjectInputStream in = new ObjectInputStream(fileIn);
+         p = (Player) in.readObject();
+         in.close();
+         fileIn.close();
+         System.out.println("File loaded!");
+      }
+    catch (IOException i) {
+         i.printStackTrace();
+         return null;
+      }
+    catch (ClassNotFoundException c) {
+         System.out.println("Save file not found.");
+         c.printStackTrace();
+         return null;
+      }
+    return p;
+  }
+}

@@ -1,0 +1,150 @@
+import java.util.Scanner;
+import java.lang.Math;
+import java.util.ArrayList;
+
+public class Enemy {
+  private String name;
+  private int lv;
+  private int xpGiven;
+  private int maxHP;
+  private int hp;
+  
+  private int str;
+  private int craft;
+  private int focus;
+  
+  private String element;
+  private String weak;
+  
+  private double critChance;
+  private double critMult;
+    
+  private Weapon weapon;
+  private Armor armor;
+  private Artifact art;
+  private Scroll scroll;
+  
+  public Enemy(String name, int lv, int health, int baseStr, int baseCraft, int baseFocus, String ele,Weapon w,Artifact a,Scroll s,Armor armor) {
+    this.name=name;
+    this.lv=lv;
+    maxHP=health;
+    hp=maxHP;
+    str=baseStr;
+    craft=baseCraft;
+    focus=baseFocus;
+    
+    weapon=w;
+    art=a;
+    scroll=s;
+    this.armor=armor;
+    
+    critMult=Math.random()*lv*lv+lv*lv+lv;
+    xpGiven=(int)critMult;
+    
+    critChance=0.2*lv;
+    critMult=2.0;
+    
+    element=ele;
+    if (ele=="Fire")
+      weak="Earth";
+    if (ele=="Earth")
+      weak="Ice";
+    if (ele=="Ice")
+      weak="Fire";
+  }
+  
+  public int giveXP(){
+    return xpGiven;
+  }
+  
+  public String getName(){
+    return name;
+  }
+  
+  public String getElement(){
+    return element;
+  }
+  
+  public String getWeak(){
+    return weak;
+  }
+  
+  public Weapon getWeapon() {
+    return weapon;
+  }
+  
+  public int getMaxHP(){
+    return maxHP;
+  }
+  
+  public int getHP(){
+    return hp;
+  }
+  
+  public int getStr(){
+    return str;
+  }
+  
+  public int getCraft(){
+    return craft;
+  }
+  
+  public int getFocus(){
+    return focus;
+  }
+  
+  public double getCC(){
+    return critChance;
+  }
+  
+  public double getCM(){
+    return critMult;
+  }
+    
+  public int takeDamage(int dam,int stat,String ele){
+    if (ele==weak){
+      System.out.println("The "+name+" is weak to "+ele+", you deal double damage!");
+      dam*=2;
+    }
+    dam-=armor.getDef();
+    if (stat==1){
+      dam-=str;
+      if (dam<0)
+        dam=0;
+      hp-=dam;
+    }
+    if (stat==2){
+      dam-=craft;
+      if (dam<0)
+        dam=0;
+      hp-=dam;
+    }
+    if (stat==3){
+      dam-=focus;
+      if (dam<0)
+        dam=0;
+      hp-=dam;
+    }
+    return dam;
+  }
+  
+  public int heal(int healed){
+    int x=maxHP-hp;
+    hp+=healed;
+    if (hp > maxHP) {
+      hp=maxHP;
+      return x;
+    }
+    return healed;
+  }
+  
+  public String toString(){
+    String stats="Level "+lv+" "+name;
+    stats+="\nMax Health: "+maxHP;
+    stats+="\nCurrent Health: "+hp;
+    stats+="\nStrength: "+str;
+    stats+="\nCraftiness: "+craft;
+    stats+="\nFocus: "+focus;
+    return stats;
+  }
+}

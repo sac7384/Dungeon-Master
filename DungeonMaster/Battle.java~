@@ -1,0 +1,510 @@
+import java.util.Scanner;
+import java.lang.Math;
+import java.util.ArrayList;
+
+
+public class Battle {
+  public Battle(Player p, Enemy e){
+    Scanner scan=new Scanner(System.in);
+    int[][] skills=p.getSkills();
+    int originalHP=p.getMaxHP();
+    int damage=0;
+    double r=0.0;
+    int v=1;
+    double tempCM=0;
+    boolean flinch=false;
+    
+    boolean pray=false;
+    boolean weakened=false;
+    boolean canBot=false;
+    boolean medBot=false;
+    boolean fortBot=false;
+    boolean fire=false;
+    boolean thorns=false;
+    boolean bark=false;
+    
+    while(true){
+      flinch=false;
+      System.out.println("Enter any number to continue.");
+      scan.nextInt();
+      System.out.println("******************************");
+      System.out.println(p);
+      System.out.println("******************************");
+      System.out.println("------------------------------");
+      System.out.println(e);
+      System.out.println("------------------------------");
+      
+      System.out.println("1-Weapon\n2-Artifact\n3-Scroll\n4-Skills\n5-Inventory\n6-Escape");
+      int action=scan.nextInt();
+      
+      if (action==1){ //Normal Attack
+        r=Math.random()*(p.getWeapon().getMax() - p.getWeapon().getMin() + 1)+p.getWeapon().getMin();
+        damage=p.getStr()+(int)r;
+        if (p.getWeapon().getEle() == "None"){
+          damage+=damage*(10.0*skills[0][3]/100); //Brute Force
+        }
+        
+        v=1;
+        while (true){ //Rage
+          if (p.getHP() <= p.getMaxHP()-(v*(p.getMaxHP()/10))){
+            v++;
+          }
+          else {
+            damage*=(4.0*skills[0][5]*(v-1)/100+1);
+            break;
+          }
+        }
+        
+        if (weakened){ //Weakened Check
+          damage+=(damage*(10.0*skills[2][1]/100));
+        }
+        
+        
+        if (Math.random()*100+1 < p.getCC()){//Crit Check
+          System.out.println("You got a Critical Hit!");
+          damage=(int)(damage*(p.getCM()+tempCM));
+          tempCM+=0.2*skills[2][3];
+        }
+        
+        System.out.println("You swing your weapon and deal "+e.takeDamage(damage,1,p.getWeapon().getEle())+" Strength damage.");
+      }
+      
+      if (skills[2][5]*20 >= Math.random()*100+1){ //Quick Draw
+        r=Math.random()*(p.getWeapon().getMax() - p.getWeapon().getMin() + 1)+p.getWeapon().getMin();
+        damage=p.getStr()+(int)r;
+        if (p.getWeapon().getEle() == "None"){
+          damage+=damage*(10.0*skills[0][3]/100); //Brute Force
+        }
+        
+        v=1;
+        while (true){ //Rage
+          if (p.getHP() <= p.getMaxHP()-(v*(p.getMaxHP()/10))){
+            v++;
+          }
+          else {
+            damage*=(4.0*skills[0][5]*(v-1)/100+1);
+            break;
+          }
+        }
+        
+        if (weakened){ //Weakened Check
+          damage+=(damage*(10.0*skills[2][1]/100));
+        }
+        
+        if (Math.random()*100+1 < p.getCC()){//Crit Check
+          System.out.println("You got a Critical Hit!");
+          damage=(int)(damage*(p.getCM()+tempCM));
+          tempCM+=0.2*skills[2][3];
+        }
+        System.out.println("You spot an opening and quickly attack the enemy again. You deal "+e.takeDamage(damage,1,p.getWeapon().getEle())+" Strength damage.");
+      }
+      
+      if (e.getHP()<=0){ //Enemy Kill Check
+          System.out.println("You defeated the "+e.getName()+" and earned "+e.giveXP()+" experience points!");
+          p.setMaxHP(originalHP);
+          p.earnXP(e.giveXP());
+          break;
+      }
+      
+      if (action==2){ //Artifact Attack
+        r=Math.random()*(p.getArt().getMax() - p.getArt().getMin() + 1)+p.getArt().getMin();
+        damage=p.getCraft()+(int)r;
+        if (weakened){ //Weakened Check
+          damage+=(damage*(10.0*skills[2][1]/100));
+        }
+        if (Math.random()*100+1 < p.getCC()){//Crit Check
+          System.out.println("You got a Critical Hit!");
+          damage=(int)(damage*(p.getCM()+tempCM));
+          tempCM+=0.2*skills[2][3];
+        }
+        System.out.println("You press a button on your Artifact. You can't describe what it does or how it does it, but it hurts the enemy so... great! The enemy takes "+e.takeDamage(damage,2,p.getArt().getEle())+" Craftiness damage.");
+      }
+      
+      if (action==3){ //Scroll Attack
+        r=Math.random()*(p.getScroll().getMax() - p.getScroll().getMin() + 1)+p.getScroll().getMin();
+        damage=p.getFocus()+(int)r;
+        if (weakened){ //Weakened Check
+          damage+=(damage*(10.0*skills[2][1]/100));
+        }
+        if (Math.random()*100+1 < p.getCC()){//Crit Check
+          System.out.println("You got a Critical Hit!");
+          damage=(int)(damage*(p.getCM()+tempCM));
+          tempCM+=0.2*skills[2][3];
+        }
+        System.out.println("You focus your magical energy and release it at your enemy and deal "+e.takeDamage(damage,3,p.getScroll().getEle())+" Focus damage.");
+      }
+      
+      if (action==4){ //Skills
+        int x=42;
+        while (true){
+          System.out.print("Enter the number of the skill you would like to use or 0 to return to the battle screen");
+          if (skills[0][1] != 0)
+            System.out.print("\n1-Headbutt (Uses half your Strength and does between "+p.getLV()+" and "+2*p.getLV()+" in damage and has a "+4*skills[0][1]+"% chance to flinch the enemy)");
+          if (skills[1][1] != 0) {
+            System.out.print("\n2-Prayer (Blocks "+1*skills[1][1]+"% of damage until the end of the battle)");
+            if (pray)
+              System.out.print(" (Currently Active)");
+          }
+          if (skills[2][1] != 0){
+            System.out.print("\n3-Weaken Armor (Enemy takes "+10*skills[2][1]+"% more damage for the duration of the battle)");
+            if (weakened)
+              System.out.print(" (Currently Active)");
+          }
+          if (skills[3][1] != 0){
+            System.out.print("\n4-Cannon Bot (Attacks enemy at the end of your turn dealing "+20*skills[3][1]+"% of your Craftiness plus between "+p.getLV()+" and "+p.getLV()*2+" in damage)");
+            if (canBot)
+              System.out.print(" (Currently Active)");
+          }
+          if (skills[3][3] != 0){
+            System.out.print("\n5-Medic Bot (Heals "+2*skills[3][3]+"% of your Max Health at the end of your turn)");
+            if (medBot)
+              System.out.print(" (Currently Active)");
+          }
+          if (skills[3][5] != 0){
+            System.out.print("\n6-Fortress Bot (Blocks "+3*skills[3][5]+"% of the enemy's attacks)");
+            if (fortBot)
+              System.out.print(" (Currently Active)");
+          }
+          if (skills[4][1] != 0)
+            System.out.print("\n7-Fireball (A Fire spell that deals between "+p.getLV()+" and "+p.getLV()*2+" in Focus damage and hurts the enemy for "+2*skills[4][1]+"% of their Max Health at the end of their turn)");
+          if (skills[4][3] != 0)
+            System.out.print("\n8-Ice Spear (An Ice spell that deals between "+p.getLV()+" and "+p.getLV()*2+" in Focus damage and has a "+2*skills[4][3]+"% chance to freeze the enemy for the turn)");
+          if (skills[4][5] != 0)
+            System.out.print("\n9-Vine Tangle (An Earth spell that deals between "+p.getLV()+" and "+p.getLV()*2+" in Focus damage and heals the you for "+5*skills[4][5]+"% of the damage done)");
+          if (skills[5][1] != 0)
+            System.out.print("\n10-Synthesis (Heals yourself for "+10*skills[5][1]+"% of your Max Health)");
+          if (skills[5][3] != 0){
+            System.out.print("\n11-Thorns (Cover yourself in thorns that returns "+10*skills[5][3]+"% of the damage done to you)");
+            if (thorns)
+              System.out.print(" (Currently Active)");
+          }
+          if (skills[5][5] != 0){
+            System.out.print("\n12-Bark Skin (Increases your Max Health by "+20*skills[5][5]+"% for the remainder of the battle)");
+            if (bark)
+              System.out.print(" (Currently Active)");
+          }
+          
+          if (action==5){
+            ArrayList inventory=p.getInventory();
+            for (int i=0; i < inventory.size(); i++){
+              System.out.println("0-Exit");
+            }
+          }
+            
+          System.out.println("");
+          x=scan.nextInt();
+          
+          if (x==0)
+            break;
+          if (x==1){
+            r=Math.random()*(p.getWeapon().getMax() - p.getWeapon().getMin() + 1)+p.getWeapon().getMin();
+            damage=p.getStr()/2+(int)r;
+            damage+=damage*(10*skills[0][3]/100); //Brute Force
+            
+            v=1;
+            while (true){ //Rage
+              if (p.getHP() <= p.getMaxHP()-(v*(p.getMaxHP()/10))){
+                v++;
+              }
+              else {
+                damage+=4*skills[0][5]*(v-1);
+                break;
+              }
+            }
+            
+            if (weakened){ //Weakened Check
+              damage+=damage*(10.0*skills[2][1]/100);
+            }
+        
+            if (Math.random()*100+1 < p.getCC()){ //Headbutt Crit Check
+              System.out.println("You got a Critical Hit!");
+              damage=(int)(damage*(p.getCM()+tempCM));
+              tempCM+=0.2*skills[2][3];
+            }
+        
+            System.out.println("You Headbutt the enemy and deal "+e.takeDamage(damage,1,"None")+" damage.");
+            
+            if (e.getHP()<=0){ //Enemy Kill Check
+              break;
+            }
+            
+            if (Math.random()*100+1 <= 4*skills[0][1]){ //Flinch Check
+              flinch=true;
+              System.out.println("The enemy flinched!");
+            }
+            break;
+          }
+          if (x==2) {
+            if (pray){
+              System.out.println("The gods are already protecting you.");
+              continue;
+            }
+            System.out.println("You pray to the gods and they vow to protect you.");
+            pray=true;
+            break;
+          }
+          if (x==3) {
+            if (weakened){
+              System.out.println("The enemy's armor has already been weakened.");
+              continue;
+            }
+            System.out.println("You rush towards your enemy and slash at their armor, weakening it.");
+            weakened=true;
+            break;
+          }
+          if (x==4) {
+            if (canBot){
+              System.out.println("Cannon Bot has already been deployed.");
+              continue;
+            }
+            System.out.println("You quickly set up your Cannon Bot. A small puff of smoke escapes from its mouth.");
+            canBot=true;
+            break;
+          }
+          if (x==5) {
+            if (medBot){
+              System.out.println("Medic Bot has already been deployed.");
+              continue;
+            }
+            System.out.println("You turn on your Medic Bot. It hovers around you, inspecting you for wounds.");
+            medBot=true;
+            break;
+          }
+          if (x==6) {
+            if (fortBot){
+              System.out.println("Fortress Bot has already been deployed.");
+              continue;
+            }
+            System.out.println("You set up Fortress Bot. A drawbridge on the front drops down heavily. A large transparent shield appears between you and your enemy.");
+            fortBot=true;
+            break;
+          }
+          r=Math.random()*p.getLV()+p.getLV(); //Spell Skills Damage
+          damage=(int)r+p.getFocus();
+          if (weakened){ //Weakened Check
+            damage+=damage*(10.0*skills[2][1]/100);
+          }
+        
+          if (Math.random()*100+1 < p.getCC()){ //Spell Skills Crit Check
+            System.out.println("You got a Critical Hit!");
+            damage=(int)(damage*(p.getCM()+tempCM));
+            tempCM+=0.2*skills[2][3];
+          }
+          if (x==7) {
+            System.out.println("You focus your magical energy and shoot a ball of flames at your enemy, dealing "+e.takeDamage(damage,3,"Fire")+" damage.");
+            if (!fire)
+              System.out.println("The gound underneath them lights on fire.");
+            fire=true;
+            break;
+          }
+          if (x==8){
+            System.out.println("You form an icicle between your hands and thrust it towards your enemy, dealing "+e.takeDamage(damage,3,"Ice")+" damage.");
+            if (e.getHP()<=0){ //Enemy Kill Check
+              break;
+            }
+            
+            if (Math.random()*100+1 <= 2*skills[4][3]){ //Freeze Check
+              flinch=true;
+              System.out.println("The enemy was frozen in place!");
+            }
+            break;
+          }
+          if (x==9){
+            v=e.takeDamage(damage,3,"Earth");
+            System.out.println("At your call sturdy vines emerge from the earth and wrap around your enemy. They squeeze the enemy, dealing "+v+" damage and absorbing "+p.heal((int)(5.0*skills[4][5]/100*v))+" health from them.");
+            break;
+          }
+          if (x==10) {
+            System.out.println("You focus your energy and absorb some sunlight and heal "+p.heal((int)(10.0*skills[5][1]/100*p.getMaxHP()))+" Health.");
+            break;
+          }
+          if (x==11) {
+            if (thorns){
+              System.out.println("You have already covered yourself in thorns.");
+              continue;
+            }
+            System.out.println("You picture yourself as a rosebush and cover yourself in sharp thorns.");
+            thorns=true;
+            break;
+          }
+          if (x==12) {
+            if (bark){
+              System.out.println("You have already turned your skin to bark.");
+              continue;
+            }
+            p.setMaxHP((int)(20.0*skills[5][5]/100*p.getMaxHP()+p.getMaxHP()));
+            System.out.println("You absorb energy from the earth and make yourself one with Nature. Your skin turns into tough bark.");
+            bark=true;
+            break;
+          }
+        
+        }
+        if (x==0)
+          continue;
+      }
+      
+      if (e.getHP()<=0){ //Enemy Kill Check
+          System.out.println("You defeated the "+e.getName()+" and earned "+e.giveXP()+" experience points!");
+          p.setMaxHP(originalHP);
+          p.earnXP(e.giveXP());
+          break;
+      }
+      
+      if (action==6) {  //Surrender
+        p.heal(p.getHP()*-1);
+        break;
+      }
+      
+      //Enemy's Turn
+      double g=0.0;
+      while (true) {
+        g=Math.random()*3+1;
+        if (!e.getAttacks()[0] && !e.getAttacks()[1] && !e.getAttacks()[2]) {
+          System.out.println("The rabbit stares at you with the most adorable eyes you have ever seen.");
+          g=0;
+          break;
+        }
+        if (!e.getAttacks()[0] && (int)g==1)
+          continue;
+        if (!e.getAttacks()[1] && (int)g==2)
+          continue;
+        if (!e.getAttacks()[2] && (int)g==3)
+          continue;
+        break;
+      }
+      
+      if (flinch)
+        g=0;
+      
+      if (fortBot && !flinch){ //Fortress Bot
+        r=Math.random()*100+1;
+        if ((int)r <= 3*skills[3][5]){
+          g=0;
+          System.out.println("Fortress Bot blocked the enemy's attack.");
+        }
+      }
+      
+      if (pray && !flinch){ //Prayer
+        r=Math.random()*100+1;
+        if ((int)r <= 1*skills[1][1]){
+          g=0;
+          System.out.println("The gods protected you from the enemy's attack.");
+        }
+      }
+      
+      v=1;
+      if ((int)g==1){ //Enemy Str
+        r=Math.random()*(e.getWeapon().getMax() - e.getWeapon().getMin() + 1)+e.getWeapon().getMin();
+        damage=e.getStr()+(int)r;
+        if (Math.random()*100+1 < e.getCC()){
+          System.out.println("The enemy got a Critical Hit!");
+          damage=(int)(damage*e.getCM());
+        }
+        while (true){ //Providence
+          if (p.getHP() <= p.getMaxHP()-(v*(p.getMaxHP()/10))){
+            v++;
+          }
+          else {
+            r=(((double)2*skills[1][5]*(v-1)/100)*damage);
+            damage-=r/2;
+            break;
+          }
+        }
+        v=p.takeDamage(damage,1);
+        System.out.println("The enemy attacks you and deals "+v+" Strength damage.");
+        if (thorns){
+          System.out.println("Sharp thorns dig into your opponent and deal "+e.heal((int)(10.0*skills[5][3]/100*v*-1))*-1+" damage.");
+        }
+      }
+      
+      if ((int)g==2){ //Enemy Craft
+        r=Math.random()*(e.getWeapon().getMax() - e.getWeapon().getMin() + 1)+e.getWeapon().getMin();
+        damage=e.getStr()+(int)r;
+        if (Math.random()*100+1 < e.getCC()){
+          System.out.println("The enemy got a Critical Hit!");
+          damage=(int)(damage*e.getCM());
+        }
+        while (true){ //Providence
+          if (p.getHP() <= p.getMaxHP()-(v*(p.getMaxHP()/10))){
+            v++;
+          }
+          else {
+            r=(((double)2*skills[1][5]*(v-1)/100)*damage);
+            damage-=r/2;
+            break;
+          }
+        }
+        v=p.takeDamage(damage,2);
+        System.out.println("The enemy attacks you and deals "+v+" Craftiness damage.");
+        if (thorns){
+          System.out.println("Sharp thorns dig into your opponent and deal "+e.heal((int)(10.0*skills[5][3]/100*v*-1))*-1+" damage.");
+        }
+      }
+      
+      if ((int)g==3){ //Enemy Focus
+        r=Math.random()*(e.getWeapon().getMax() - e.getWeapon().getMin() + 1)+e.getWeapon().getMin();
+        damage=e.getStr()+(int)r;
+        if (Math.random()*100+1 < e.getCC()){
+          System.out.println("The enemy got a Critical Hit!");
+          damage=(int)(damage*e.getCM());
+        }
+        while (true){ //Providence
+          if (p.getHP() <= p.getMaxHP()-(v*(p.getMaxHP()/10))){
+            v++;
+          }
+          else {
+            r=(((double)2*skills[1][5]*(v-1)/100)*damage);
+            damage-=r/2;
+            break;
+          }
+        }
+        v=p.takeDamage(damage,3);
+        System.out.println("The enemy attacks you and deals "+v+" Focus damage.");
+        if (thorns){
+          System.out.println("Sharp thorns dig into your opponent and deal "+e.heal((int)(10.0*skills[5][3]/100*v*-1))*-1+" damage.");
+        }
+      }
+      
+      if (p.getHP()<=0){ //Player Kill Check
+        System.out.println("Your health falls to zero but I teleport you back to Tyrnel before the enemy can finish you off. You rest at the Inn and restore your health.");
+        System.out.println("You may want to be a little more careful with the fights you pick. Maybe you should get a bit stronger or try to find some better items.");
+        break;
+      }
+      
+      if (canBot){
+        r=Math.random()*p.getLV()+p.getLV();
+        damage=(int)((20.0*skills[3][1]/100)*p.getCraft()+r);
+        if (weakened){ //Weakened Check
+          damage+=damage*(10.0*skills[2][1]/100);
+        }
+        if (Math.random()*100+1 < p.getCC()){ //Cannon Crit Check
+          System.out.println("Cannon Bot got a Critical Hit!");
+          damage=(int)(damage*(p.getCM()+tempCM));
+          tempCM+=0.2*skills[2][3];
+        }
+        System.out.println("Cannon Bot fires a cannonball and deals "+e.takeDamage(damage,2,"None")+" damage.");
+      }
+      
+      if (fire){
+        System.out.println("The flames underneath your enemy deal "+e.heal((int)(2.0*skills[4][1]/100*e.getMaxHP())*-1)*-1+" damage.");
+      }
+      
+      if (e.getHP()<=0){ //Enemy Kill Check
+          System.out.println("You defeated the "+e.getName()+" and earned "+e.giveXP()+" experience points!");
+          p.setMaxHP(originalHP);
+          p.earnXP(e.giveXP());
+          break;
+        }
+      
+      if (medBot){
+        System.out.println("Medic Bot fixes some of your wounds and heals "+p.heal((int)(2.0*skills[3][3]/100*p.getMaxHP()))+" health");
+      }
+      
+      if (p.getRegen() != 0){
+        System.out.println("You regenerated "+p.heal((int)((p.getRegen()/100)*p.getMaxHP()))+" of your health");
+      }
+      
+    }
+    
+  }
+}

@@ -1,0 +1,94 @@
+import java.io.*;
+import java.util.Scanner;
+import java.lang.Math;
+import java.util.ArrayList;
+
+public class ShadowForest {
+  static Scanner scan=new Scanner(System.in);
+  private Player p;
+  private Enemy e;
+  
+  public ShadowForest(Player player) {
+    p=player;
+  }
+  
+  public Item ShadowForestItem(){
+    int r=(int)(Math.random()*4);
+    if (r==0) {
+      Item i=new Item("Small Healing Potion",20,1);
+      System.out.println("You found a Small Healing Potion in the knot of a tree. Cool.");
+      return i;
+    }
+    else if (r==1){
+      Scroll i=new Scroll("Root Tangle Spell",(int)(Math.random()*3+2),(int)(Math.random()*3+4),"Earth"); // 2-4, 4-6
+      System.out.println("You found a Root Tangle scroll on the ground in the middle of a hastily drawn circle. Not suspicious at all.");
+      return i;
+    }
+    else if (r==2){
+      Armor i=new Armor("Leather Tunic",(int)(Math.random()*2));
+      i.addExtras((int)(Math.random()*6),0,0,0,0,0,0);
+      System.out.println("You found a Leather Tunic lying on the ground. Cool.");
+      return i;
+    }
+    else if (r==3){
+      Weapon i=new Weapon("Woodcutter's Axe", (int)(Math.random()*2+1),(int)(Math.random()*4+7),"None"); // 1-2, 7-10
+      i.addExtras(0,0,(int)(Math.random()*2+1),-(int)(Math.random()*2),0,0,0);
+      System.out.println("");
+      return i;
+    }
+    return null;
+  }
+  
+  public void southSide() {
+    
+  }
+  
+  public void westSide() {
+    
+  }
+  
+  public void single(){
+    int g=(int)(Math.random()*5+1);
+    if (g==1) {
+      System.out.println("I don't know what number this one is but I don't think it matters. He's gonna steal your stuff if you don't fight him so... fight him.");
+      e=new Enemy("Bandit",3,15,4,4,2,"",new Weapon("",2,4,""),new Artifact("",2,4,""),new Scroll("",2,3,""),new Armor("",0));
+      e.setAttacks(true,true,false);
+    }
+    if (g==2) {
+      System.out.println("Oh no! That's a werewolf! Wait... he looks kind of confused. Maybe he's lost?");
+      e=new Enemy("Where? Wolf",3,18,5,2,2,"",new Weapon("",3,5,""),new Artifact("",2,3,""),new Scroll("",2,3,""),new Armor("",0));
+      e.setAttacks(true,false,false);
+    }
+    if (g==3){
+      System.out.println("Look a Forest Slime! What do you mean it looks just like the Plains Slime? It's a slime! There aren't many ways to differentiate one type of slime from another. I just assumed that since it was in a forest...");
+      e=new Enemy("Forest Slime. Or maybe a Plains Slime",3,18,4,3,3,"",new Weapon("",2,5,""),new Artifact("",2,3,""),new Scroll("",2,3,""),new Armor("",0));
+      e.setAttacks(true,false,false);
+    }
+    if (g==4){
+      System.out.println("Hey there's someone just ahead! Hey there! Uh oh, they have a pointy hat. And a big pointy nose. And large warts. What do you think it is? A witch? That is extremely stereotypical of you. You shouldn't judge a book by its cover. But yea it's a witch.");
+      e=new Enemy("Stereotypical Witch",4,16,2,4,5,"",new Weapon("",2,3,""),new Artifact("",2,3,""),new Scroll("",3,6,""),new Armor("",0));
+      e.setAttacks(false,false,true);
+    }
+    if (g==5){
+      System.out.println("Hmmm... looks like there aren't any badguys in this encounter. There is a mysterious looking cave ahead though.");
+      if (p.getQuestProgress(4)==1){
+        System.out.println("Hey there are the two bandits! Looks like they ran into the cave, probably trying to hide. Let's follow them!");
+        p.completeQuest(4);
+        p.startQuest(5);
+      }
+      else if (p.getQuestProgress(5)==1){
+        System.out.println("I think the bandits might still be inside. We should stop dawdling and try to find them!");
+      }
+    }
+    new Battle(p,e);
+  }
+  
+  public void journey(){
+    for (int i=0; i < (int)(Math.random()*4+2); i++){
+      single();
+      if (p.getHP() <= 0)
+        break;
+      System.out.println("You continue through the dark forest");
+    }
+  }
+}

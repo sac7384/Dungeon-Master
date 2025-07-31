@@ -1,0 +1,82 @@
+import java.io.*;
+import java.util.Scanner;
+import java.lang.Math;
+import java.util.ArrayList;
+
+public class DungeonMaster {    
+  public static void main(String[] args) throws FileNotFoundException, IOException{
+    Scanner scan = new Scanner(System.in);
+    FileSaver f = new FileSaver();
+    while (true) {
+      Player player= new Player("Noodle Caboodle");
+      GameMenu g=new GameMenu(player);
+      System.out.println("Main Menu - Enter the number of the option you would like to select");
+      System.out.println("\n1-New Game\n2-Load Game\n3-Quit Game");
+      int x=scan.nextInt();
+      
+      if (x==1){  //Tutorial
+        System.out.println("Hello there, and welcome to the continent of Dwendra! I am the narrator. I will relate everything that happens to you during your adventure!");
+        System.out.println("You are a traveller who has come to Dwendra to explore exotic environments, fight ferocious fiends, and... um... I can't think of any more alliterations. But you'll get stronger too.");
+        System.out.println("Let's get better aquainted! What is your name?");
+        System.out.println("Since you're entering a new place where no one knows you, you can pick anything: Bob, Skull Crusher, Noodle Man. Whatever name you like best.");
+        String name=scan.nextLine();
+        name=scan.nextLine();
+        player=new Player(name);
+        g=new GameMenu(player);
+        
+        System.out.println("Alright now I know your name! You'll be doing a lot of fighting on your adventures and how well you perform will be determined by your stats.");
+        System.out.print("Below this text should be an input bar, this is so that you have time to read everything I say. ");
+        System.out.println("There will be many of these throughout the game, just enter any number to continue.");
+        scan.nextInt();
+        System.out.println(player);
+        System.out.println("\nOnce you've looked over your stats enter any number and I will explain what each stat means.");
+        System.out.print("If you have any experience with RPG games then you will likely know most of these already. If so you can skip most of what I'm about to say, but you may want to listen to my explanation of Strength, Craftiness, and Focus ");
+        System.out.println("because those three are the only ones the developer didn't steal from other RPG games... I mean the most important stats! They are the most unique and creative stats that you have ever seen! Ok, on to the explanation.");
+        scan.nextInt();
+        
+        //Stat description
+        //HP and regen
+        System.out.println("Your name is displaid at the top of the stats page, so I hope your proud of it. Below that is your max and current HP. HP stands for Hit Points.");
+        System.out.println("Your max HP is the highest your health can go. This number increases everytime you level up and can be increased in other ways as well.");
+        System.out.println("Your current HP is the amount of HP you have right now. It will decrease any time you take damage.");
+        System.out.println("If your HP falls to or below zero then you will die.");
+        System.out.println("When your character dies I will take you back to Tyrnel, the capitol of Dwendra.");
+        System.out.println("Next is your regeneration. This is how much HP you will regenerate in battle at the end of your turn.");
+        System.out.println("You don't start with any regeneration but it can be obtained from items and skills later in the game.");
+        System.out.println("Enter any number to continue");
+        scan.nextInt();
+        
+        //Three main and Criticals
+        System.out.println("Strength, Craftiness, and Focus are three of the most important stats in the game.");
+        System.out.println("These three stats determine how much damage you deal when you attack and how much damage you take when you are attacked.");
+        System.out.println("Strength increases the damage of your normal attacks. Craftiness increases the damage of your artifacts. Focus increases the damage of scrolls.");
+        System.out.println("Each one of these stats is increased by your equipment and by upgrading your skill tree.");
+        System.out.println("SP stands for Skill Points. These are used to upgrade your skill tree. I will cover the skill tree later in the tutorial.");
+        System.out.println("Your critial hit chance is the percentage chance you have to get a critical hit when you deal damage to an enemy.");
+        System.out.println("If you land a critical hit your damage will be multiplied by your critical hit damage multiplier.");
+        
+        //Leveling up and XP
+        System.out.println("The next stat is your level. Every time you level up you increase your HP, Strength, Craftiness, Focus, and you get one point to be used in your skill tree.");
+        System.out.println("An enemy's level can be a good approximation of how strong it is. If an enemy's level is higher than yours then you may not win against it.");
+        System.out.println("The next stat is your experience or XP. XP is earned from completing quests and killing enemies.");
+        System.out.println("Underneath your XP is how much XP your character needs to level up.\nEnter any number to move on.");
+        scan.nextInt();
+        //Tutorial Continued in GameMenu class
+        g.start();
+      }
+      
+      //Loading Files
+      if (x==2){
+        player=f.load();
+        g=new GameMenu(player);
+        g.tyrnel();
+      }
+      
+      //Quitting Game
+      if (x==3)
+        break;
+      
+    }
+    
+  }
+}

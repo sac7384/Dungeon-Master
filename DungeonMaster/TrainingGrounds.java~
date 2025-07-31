@@ -1,0 +1,12 @@
+import java.io.*;
+import java.util.Scanner;
+import java.lang.Math;
+import java.util.ArrayList;
+
+public class TrainingGrounds {
+  private Player p;
+  
+  public TrainingGrounds(Player player) {
+    p=player;
+  }
+}

@@ -1,0 +1,188 @@
+import java.io.*;
+import java.util.Scanner;
+import java.lang.Math;
+import java.util.ArrayList;
+
+public class GameMenu {
+  static Scanner scan=new Scanner(System.in);
+  static FileSaver f=new FileSaver();
+  private Player p;
+  
+  public GameMenu(Player player){
+    p=player;
+  }
+  
+  public void start(){
+    //Tutorial Continued
+    //Player Menu
+    System.out.println("Now that you've seen your stats, I'm gonna show you the player menu.");
+    System.out.println("From the player menu you can look at the stats screen you just saw, see the stats of your equipment, access your inventory, and access your skill tree.");
+    System.out.println("I'll go ahead and explain everything to you and then you can poke around in the player menu to see everything for yourself. Remember that you can always scroll up and read through my explanation while you peruse the menu.");
+    System.out.println("Oops, I broke the fourth wall again didn't I? This is why I keep getting fired... Forget I said any of that okay? And please don't tell my boss.");
+    //Equipment
+    System.out.println("The first option in the player menu is your stats which you have already seen. The second option show you the stats of your equipment. This will show you your currently equipped weapon, artifact, scroll, and armor.");
+    System.out.println("Your the first three are very similar. Each one is used for attacking enemies and uses a different stat. Your weapon uses the Strength stat, your artifact uses the Craftiness stat, and your scroll uses your Focus stat.");
+    System.out.println("Your armor defends against damage but is not specific to any one stat. It will reduce damage from all sources.");
+    System.out.println("Your attacking equipment has the same stats: a name, an element, and damage. Some special items will give you extra stat boosts to Health, Strength, Critical Hit Chance, etc. When you look at your stats these bonuses will be taken into account.");
+    System.out.println("Your equipment's damage is represented by a range of values. When you attack with your weapon it will deal a random number of damage between those two numbers(inclusive)");
+    System.out.println("The element tells you what type of damage your weapon will deal. If an enemy is weak to your weapon's element you will deal double damage. Enter any number to continue.");
+    scan.nextInt();
+    //Inventory
+    System.out.println("The inventory is where you will store all your items. From there you can equip your weapons, artifacts, scrolls, and armor. You can also use other items like healing potions.");
+    System.out.println("Battle items can't be used from the player menu. No drinking dangerous potions! When you first select an item you will see its description, then you can decide to use it or not.");
+    System.out.println("Hmmm? How large is your inventory? Infinite! You can store as many items as you would like in there. That's unrealistic? Dwendra is a world filled with crazy magic and creatures that can all sorts of unimaginable things. EVERYTHING is 'unrealistic' here.");
+    System.out.println("Right now you won't have anything in your inventory but once you get an item you can check that out. Any number to continue.");
+    scan.nextInt();
+    //Skill Tree
+    System.out.println("Now to skills trees. You have six of them. Two for each main stat. Each of these pairs is made of one tree that is more offensively focused and one that is more defensively focused.");
+    System.out.println("The first one in the pair is always the offensive one and the second is always the defensive one. The Knight trees are Strength focused, the Rogue trees are Craftiness focused, and the Mage trees are Focus focused. Huh, 'Focus focused'.");
+    System.out.println("When you upgrade a skill from these trees you will increase the stat that tree is focused on by however many skill points you spent.");
+    System.out.println("Each tree is structured the same way. They each have four tiers with skills that get better with each tier. The cost of each skill is the same as the tier it is in. In the first two tiers there are two options to choose from.");
+    System.out.println("The first option will increase one of your stats and the second will give you a skill that will help you in battle. Some of those skills are passive and are used automatically and some have to be activated yourself. Acitve skills have a (Active) before its description.");
+    System.out.println("Tier three and four only have one option. Tier three's option increases your stats and Tier four gives you that tree's signtature skill. Signature skills are specific to that tree's battle strategy and are the best skills in the game.");
+    System.out.println("Right now you can only see the tier one skills but you will unlock the others by spending points in that tree. Once you have spent five points (the maximum for any one skill) in a tier you will unlock the next tier.");
+    System.out.println("The last option is to look at your active quests. I'll get to that in a bit.");
+    System.out.println("Go ahead and read all that then you can check out the player menu.");
+    scan.nextInt();
+    p.playerMenu();
+    //Battle
+    System.out.println("Alright... guess I should tell you about how to kill stuff now. So I guess we can just walk around and find something weak to fight. I'll explain how battling works while you find something to ruthlessly murder.");
+    System.out.println("So when the fight starts your stats will be desplaid along with the enemy's health and three base stats. Your options will be able to do a basic attack with one of your three weapons, use a skill, use an item from your inventory, or surrender.");
+    System.out.println("You have one weapon for each main stat. Your Weapon deals Strength damage, your Artifact deals Craftiness damage, your Scroll deals Focus damage. Your skills are obtained from skill trees. If a skill stays active there will be a '(Active)' next to it once it is activated.");
+    System.out.println("Items in your inventory can be used during battle to deal damage, heal yourself, or leave effects on the battlefield. Once you use an item it will be used up. Only logical.");
+    System.out.println("The last option is to escape. This will end your expedition and return you to Tyrnel. There is a catch though, the enemy will get a hit on you before you can escape. So make sure you have decent health before you run away.");
+    System.out.println("Well that just about wraps up the battle menu. Found any small innocent creature to mutilate? AWWWWWW HE'S SO CUTE. It's the most Adorable Cute Fluffy Tiny Little Rabbit ever! Do you have to kill him? I'd love to keep him as a pet... *sigh* okay then... Enter a number to progress... I guess.");
+    //First Fight
+    new Battle(p,new Enemy("A.C.F.T.L.R.",0,1,0,0,0,"None",new Weapon("",0,0,""),new Artifact("",0,0,""),new Scroll("",0,0,""),new Armor("",0)));
+    System.out.println("Enter any number to continue");
+    scan.nextInt();
+    if (p.getHP()<=0){
+      p.heal(p.getMaxHP());
+      System.out.println("You... you spared it? Thank you! I knew you had a kind heart! I'm so happy that my little rabbit is alive-");
+      System.out.println("Well, he got carried off by some bird *sigh*. Let's just get to Tyrnel.");
+    }
+    else {
+      System.out.println("Well I hope you feel terrible now. You killed a completely innocent animal that had a long life ahead of it.");
+      System.out.println("I guess all we can do is push on to Tyrnel now. I hope you at least know how to fight now.");
+    }
+    System.out.println("So when we get to Tyrnel the first thing we'll do is head to the palace to meet King Parlin. Parlin uses adventurers like yourself extensively and supports those that work under him.");
+    System.out.println("Any adventurer with enough talent and skill can work under the King. If the adventurer passes the King's tests they will become one of his Champions. They will then be sent on quests for the King to maintain peace, justice, and whatnot.");
+    System.out.println("In return the King supports his Champions by allowing them free access to all services. This includes his Blacksmith and his Apothecary. New Champions are only given a limited selection of items to choose from in shops.");
+    System.out.println("Inns across Dwendra and the surrounding countries recognize Champions and will give them a room for free. Everyone is willing to help out the Champions that work for justice in every country.");
+    System.out.println("As you prove your trustworthiness to the King he will reward you with better services. Support the King and he will support you! That's his saying. Well looks like we're here!");
+    System.out.println("Parlin and other people will give you quests throughout your journey. Here, I'll give you a quest.");
+    p.startQuest(0);
+    System.out.println("Alright, now you have a quest. If you go to your Active Quests in the player menu you will be able to see that quest. Later when you have more quests it will show every quest you have started.");
+    System.out.println("Quest givers will tell you what their quest requires but you can use your quest list if you forget what to do. My quest is to talk to King Parlin, when you speak to him you will finish the quest and get the rewards.");
+    //Town Explanation
+    System.out.println("Before we enter the city I'll tell you about the navigation options. Every city or village will have a Inn which will heal Champions for free. You also will have the option to adventure to the surrounding areas.");
+    System.out.println("Towns will often have boards which hold quests that you can complete. If you are looking for a specific person for a quest you will also have the option to find them.");
+    System.out.println("Tyrnel has many more options compared to other places. You will always be able to speak to King Parlin, and he will gladly refresh you on the details of his quest or give you a new quest. Tyrnel's Inn is paid for by Parlin and is free for everyone to use.");
+    System.out.println("Tyrnel also has a Blacksmith and a Apothecary which will supply you with weapons and armor or potions respectively. Tyrnel also holds the fabled 'Save Stone' where you can pray and supposedly copy your essence in the heavens.");
+    System.out.println("Many believe that once a person dies they can be resurrected from that essence. I don't believe in any of that hocus pocus but I won't stop you from doing what you like.");
+    System.out.println("Enter any number to enter Tyrnel");
+    scan.nextInt();
+    tyrnel();
+  }
+  
+  public void tyrnel(){
+    while (true){
+      System.out.println("Tyrnel\n------");
+      System.out.println("0-Exit to Main Menu\n1-Adventure\n2-Speak with Parlin\n3-Inn\n4-Blacksmith\n5-Apothecary\n6-Player Menu\n7-Save Game");
+      int x=scan.nextInt();
+      if (x==0)
+        break;
+      //Parlin
+      if (x==2){
+        System.out.println("You enter the Palace of King Parlin.");
+        if (p.getQuestProgress(0)==1){
+          System.out.println("You enter the throne room and bow to the King. You tell him that you wish to become one of his Champions.");
+          System.out.println("Parlin: Another intrepid adventurer, marvelous! I will gladly give you the title of Champion but first you must pass a test. There are three tests: A Strength test, a Craftiness test, and a Focus test.");
+          System.out.println("Parlin: You only need to complete one test to pass. Choose the one that will best suit you! You can complete your test South of Tyrnel at the Training Grounds.");
+          p.completeQuest(0);
+          System.out.println("You got 10 experience!");
+          p.earnXP(10);
+          p.startQuest(1);
+          System.out.println("You first level up! Congrats! Now you should probably spend a skill point in your skill tree. It might help you with your test.");
+          System.out.println("Another thing, when you adventure to a knew place there will be a marker that tells which direction your going. (N) for North, (S) for South and so forth. The Training Ground are to the South so there will be a (S) next to it.");
+        }
+        
+        else if (p.getQuestProgress(1)==1){
+          System.out.println("Parlin: Hey there, adventurer! Have you completed a test yet? Remember they are to the South at the Training Grounds.");
+        }
+        
+        else if (p.getQuestProgress(1)==2 && p.getQuestProgress(2)==0) {
+          System.out.println("Parlin: Adventurer! Congrats on completing the test! I know dub you Champion... Oh my! I haven't learned your name yet! "+p.getName()+"? Wonderful name! I love it!");
+          System.out.println("Parlin: From now on you shall be known as Champion "+p.getName()+"! I shall give you a pin to signify your status. Now everyone will know you are a Champion of King Parlin!");
+          System.out.println("Parlin: I'll give you an easy quest to start off with. Before I have you fight any real threats I'll send you to the Plain Plains to the West.");
+          System.out.println("Parlin: Practice battling against some of the dangerous animals there and return once you feel stronger. Then I'll send you on a more dangerous quest.");
+          p.startQuest(2);
+          System.out.println("Alright! Congrats on becoming one of Parlin's Champions! Now that you'll be travelling all over Dwendra I should tell you that I'll be able to teleport you back to Tyrnel any time you need.");
+          System.out.println("Hmm? Oh. I guess that would have been helpful when we were travelling to Tyrnel earlier. It probably would've saved you some foot pain huh. Oops hehe.");
+        }
+        
+        else if (p.getQuestProgress(2)==1 && p.getLV() < 3) {
+          System.out.println("Parling: Welcome back! Hmmm you don't look any stronger. Fight the creatures in the Plain Plains and you'll know when you've become stronger. Return to me then!");
+        }
+        
+        else if (p.getQuestProgress(2)==1 && p.getLV() >= 3) {
+          System.out.println("Parlin: Welcome back! Just by looking at you I can tell you are stronger than at our last meeting. Now for your first real mission. There is a group of bandits in the Plain Plains I need you to take care of.");
+          System.out.println("Parlin: You should be able to reach them from the west side of the Plains, travel across then get rid of their camp. Good luck to you!");
+          p.completeQuest(2);
+          p.startQuest(3);
+        }
+        
+        else if (p.getQuestProgress(3)==1) {
+          System.out.println("Parlin: Have you taken out the bandits yet? They are in the Plain Plains, you should be able to reach them from the west side.");
+        }
+        
+        else if (p.getQuestProgress(3)==2 && p.getQuestProgress(4)==0) {
+          System.out.println("Parlin: Welcome back Champion! I see you have brought back some valuables. I assume they were taken from the bandit camp? As I thought.");
+          System.out.println("Parlin: Did you take out all the bandits? Two escaped? Hmmm. They may cause trouble to some of the villages throughout Dwendra.");
+          System.out.println("Parlin: For your next mission I will have you search for those two before they can rebuild their group of thieves. But where could they have run off to...");
+          System.out.println("Parlin: Your best bet would probably be to search the Shadow Forest. They would most likely seek refuge there. It's near their camp and is the only place near there with any decent hiding places.");
+          System.out.println("Parlin: Come back if you find any trace of them or anything else important. You can enter the Shadow Forest from the west side of the Plain Plains. Good luck!");
+          p.startQuest(4);
+        }
+        
+        System.out.println("Enter any number to continue.");
+        scan.nextInt();
+      }
+      //Inn
+      if (x==3){
+        System.out.println("You slept at the Inn and healed to full!");
+        p.heal(p.getMaxHP());
+      }
+      //Player Menu
+      if (x==6)
+        p.playerMenu();
+      //Save Stone
+      if (x==7)
+        f.save(p);
+      
+      //Adventure
+      if (x==1){
+        System.out.println("Enter the number of the place to adventure to or any other number to exit.");
+        if (p.getQuestProgress(0)==2)
+          System.out.println("1-Training Grounds (S)");
+        if (p.getQuestProgress(2)!=0)
+          System.out.println("2-Plain Plains (W)");
+        
+        int y=scan.nextInt();
+        //Option Selection
+        if (p.getQuestProgress(0)==2 && y==1) {
+          System.out.println("You start traveling South to the Training Grounds");
+          new TrainingGrounds(p);
+        }
+        
+        if (p.getQuestProgress(2)!=0 && y==2) {
+          System.out.println("You leave Tyrnel through the West gate and enter the Plain Plains");
+          PlainPlains plains=new PlainPlains(p);
+          plains.eastSide();
+        }
+        
+      }
+    }
+    
+  }
+}

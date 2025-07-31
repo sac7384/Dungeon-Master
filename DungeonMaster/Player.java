@@ -1,0 +1,1226 @@
+import java.util.Scanner;
+import java.lang.Math;
+import java.util.ArrayList;
+
+public class Player implements java.io.Serializable {
+  static Scanner scan=new Scanner(System.in);
+  private String name;
+  private int maxHP;
+  private int hp;
+  private double regen;
+  
+  private int str;
+  private int craft;
+  private int focus;
+  private int sp;
+  
+  private double critChance;
+  private double critMult;
+  
+  private int lv;
+  private int xp;
+  private int xpNeeded;
+    
+  private Weapon weapon;
+  private Armor armor;
+  private Artifact artifact;
+  private Scroll scroll;
+  
+  private int[][] skills;
+  private int[] quests;
+  private ArrayList<Item> inventory;  
+    
+  public Player(String name){ //Constructor
+    this.name=name;
+    maxHP=10;
+    hp=maxHP;
+    str=1;
+    craft=1;
+    focus=1;
+    sp=0;
+    regen=0;
+    critChance=0.2;
+    critMult=2.0;
+    lv=1;
+    xp=0;
+    xpNeeded=10;
+    
+    weapon= new Weapon("Beginner's Sword",2,3,"None");
+    artifact = new Artifact("Small Bomb",2,3,"None");
+    scroll= new Scroll("Energy Pulse",2,3,"None");
+    armor= new Armor("Beginner's Armor",0);
+    
+    skills=new int[6][6];
+    for (int i=0; i < 6; i++){
+      for (int j=0; j < 6; j++){
+        skills[i][j]=0;
+      }
+    }
+    inventory=new ArrayList<Item>();
+    quests=new int[10];
+    for (int i=0; i < quests.length; i++){
+      quests[i]=0;
+    }
+  }
+  
+  public void equip(Weapon w){
+    weapon=w;
+    int e[]=w.getExtras();
+    maxHP+=e[0];
+    hp+=e[0];
+    regen+=e[1];
+    str+=e[2];
+    craft+=e[3];
+    focus+=e[4];
+    critChance+=e[5];
+    critMult+=e[6];
+  }
+  
+  public void equip(Armor a){
+    armor=a;
+    int e[]=a.getExtras();
+    maxHP+=e[0];
+    hp+=e[0];
+    regen+=e[1];
+    str+=e[2];
+    craft+=e[3];
+    focus+=e[4];
+    critChance+=e[5];
+    critMult+=e[6];
+  }
+  
+  public void equip(Artifact a){
+    artifact=a;
+    int e[]=a.getExtras();
+    maxHP+=e[0];
+    hp+=e[0];
+    regen+=e[1];
+    str+=e[2];
+    craft+=e[3];
+    focus+=e[4];
+    critChance+=e[5];
+    critMult+=e[6];
+  }
+  
+  public void equip(Scroll a){
+    scroll=a;
+    int e[]=a.getExtras();
+    maxHP+=e[0];
+    hp+=e[0];
+    regen+=e[1];
+    str+=e[2];
+    craft+=e[3];
+    focus+=e[4];
+    critChance+=e[5];
+    critMult+=e[6];
+  }
+  
+  public Weapon unequipWeapon(){
+    int w[]=weapon.getExtras();
+    maxHP-=w[0];
+    hp-=w[0];
+    regen-=w[1];
+    str-=w[2];
+    craft-=w[3];
+    focus-=w[4];
+    critChance-=w[5];
+    critMult-=w[6];
+    Weapon x=weapon;
+    weapon=null;
+    return x;
+  }
+  
+  public Armor unequipArmor(){
+    int a[]=armor.getExtras();
+    maxHP-=a[0];
+    hp-=a[0];
+    regen-=a[1];
+    str-=a[2];
+    craft-=a[3];
+    focus-=a[4];
+    critChance-=a[5];
+    critMult-=a[6];
+    Armor x=armor;
+    armor=null;
+    return x;
+  }
+  
+  public Artifact unequipArt(){
+    int a[]=artifact.getExtras();
+    maxHP-=a[0];
+    hp-=a[0];
+    regen-=a[1];
+    str-=a[2];
+    craft-=a[3];
+    focus-=a[4];
+    critChance-=a[5];
+    critMult-=a[6];
+    Artifact x=artifact;
+    artifact=null;
+    return x;
+  }
+  
+  public Scroll unequipScroll(){
+    int a[]=scroll.getExtras();
+    maxHP-=a[0];
+    hp-=a[0];
+    regen-=a[1];
+    str-=a[2];
+    craft-=a[3];
+    focus-=a[4];
+    critChance-=a[5];
+    critMult-=a[6];
+    Scroll x=scroll;
+    scroll=null;
+    return x;
+  }
+  
+  public ArrayList<Item> getInventory(){
+    return inventory;
+  }
+  
+  public void addItem(Item t){
+    if (t.getPurpose()==0){
+      inventory.add(t);
+    }
+    else {
+      for (int i=0; i < inventory.size()-1; i++) {
+        if (inventory.get(i).getName() == t.getName()){
+          inventory.get(i).addQuantity(t.getQuantity());
+          return;
+        }
+      }
+      inventory.add(t);
+    }
+  }
+  
+  public void removeItem(int i){
+    if (inventory.get(i).getQuantity() > 1) {
+      inventory.get(i).addQuantity(-1);
+    }
+    else
+      inventory.remove(i);
+  }
+  
+  public void setMaxHP(int newMaxHP){
+    maxHP=newMaxHP;
+    if (hp > maxHP)
+      hp=maxHP;
+  }
+  
+  public String getName() {
+    return name;
+  }
+  
+  public int getLV(){
+    return lv;
+  }
+  
+  public int getMaxHP(){
+    return maxHP;
+  }
+  
+  public int getHP(){
+    return hp;
+  }
+  
+  public double getRegen(){
+    return regen;
+  }
+  
+  public int getStr(){
+    return str;
+  }
+  
+  public int getCraft(){
+    return craft;
+  }
+  
+  public int getFocus(){
+    return focus;
+  }
+  
+  public double getCC(){
+    return critChance;
+  }
+  
+  public double getCM(){
+    return critMult;
+  }
+  
+  public Weapon getWeapon(){
+    return weapon;
+  }
+  
+  public Artifact getArt(){
+    return artifact;
+  }
+  
+  public Scroll getScroll(){
+    return scroll;
+  }
+  
+  public Armor getArmor(){
+    return armor;
+  }
+  
+  public int[][] getSkills(){
+    return skills;
+  }
+  
+  public int getQuestProgress(int q){
+    return quests[q];
+  }
+  
+  public int takeDamage(int dam,int stat){
+    dam-=armor.getDef();
+    if (stat==1){
+      dam-=str;
+      if (dam<0)
+        dam=0;
+      hp-=dam;
+    }
+    if (stat==2){
+      dam-=craft;
+      if (dam<0)
+        dam=0;
+      hp-=dam;
+    }
+    if (stat==3){
+      dam-=focus;
+      if (dam<0)
+        dam=0;
+      hp-=dam;
+    }
+    return dam;
+  }
+  
+  public int heal(int healed){
+    int x=maxHP-hp;
+    hp+=healed;
+    if (hp > maxHP) {
+      hp=maxHP;
+      return x;
+    }
+    return healed;
+  }
+  
+  public void startQuest(int s){
+    quests[s]=1;
+    System.out.println("Quest started!");
+  }
+  
+  public void completeQuest(int q){
+    quests[q]=2;
+    System.out.println("Quest Completed!");
+  }
+  
+  public int earnXP(int xp){
+    this.xp+=xp;
+    checkXP();
+    return xp;
+  }
+  
+  public void checkXP(){
+    if (xp>=xpNeeded){
+      levelUp();
+    }
+  }
+  
+  public void levelUp(){
+    xp=xp-xpNeeded;
+    str++;
+    craft++;
+    focus++;
+    sp++;
+    lv++;
+    xpNeeded=10*lv*lv;
+    maxHP+=10;
+    hp+=10;
+    critChance+=0.2;
+    System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+    System.out.println("You leveled up!\nYour HP increased by 10!\nYour Strength, Craftiness, and Focus each increased by 1!\nYou earned one Skill Point!\nYour Critical Hit Chance increased by 0.5%!");
+    System.out.println("You now need "+xpNeeded+" experience to reach the next level.");
+    System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+    checkXP();
+  }
+  
+  public void skillTree(){
+    int y=0;
+   while (true) {
+    System.out.println("Skill Points: "+sp);
+    System.out.println("Knight Trees\n  1-Warrior\n  2-Paladin");
+    System.out.println("Rogue Trees\n  3-Assassin\n  4-Tinkerer");
+    System.out.println("Mage Trees\n  5-Sorcerer\n  6-Druid\nEnter 0 to exit.");
+    int x=scan.nextInt();
+    
+    if (x==0)
+      break;
+    
+    if (x==1){ //Warrior
+      System.out.println("Skill Points: "+sp+"\nWarrior Tree - Strength Stat");
+      System.out.println("Enter the number of the skill you would like to purchase. Enter any other number to go back to the Skill Tree selection.");
+      System.out.println("Tier One Skills\n  1-Light Lifting("+skills[0][0]+"): Increase Strength by 1\n  2-Headbutt("+skills[0][1]+"): (Active)Strength based attack which only uses half your strength but has a 4% chance to flinch the enemy");
+      if (skills[0][0]+skills[0][1] >= 5){
+        System.out.println("Tier Two Skills\n  3-Heavy Lifting("+skills[0][2]+"): Increase Strength by 2 and Health by 10\n  4-Brute Force("+skills[0][3]+"): Weapons with no element do 10% more damage");
+      }
+      if (skills[0][2]+skills[0][3] >= 5)
+        System.out.println("Tier Three Skill\n  5-MEGA WORKOUT("+skills[0][4]+"): Increases Strength by 5 and Health by 25");
+      if (skills[0][4] >= 5)
+        System.out.println("Tier Four Skill\n  6-Rage("+skills[0][5]+"): For every 10% Health lost attack damage of normal attacks is increased by 4%");
+      y=scan.nextInt();
+      
+      if (y==1) {
+        if (sp >= 1){
+          if (skills[0][0] < 5){
+            sp-=1;
+            skills[0][0]++;
+            str+=2;
+            System.out.println("You lifted some light rocks. Your Strength increased by 1!\nYour faith to the Warrior lifestyle increased your Strength by 1!");
+          }
+          else
+            System.out.println("You have already maxed out this skill.");
+        }
+        else
+          System.out.println("You don't have enough Skill Points to purchase that.");
+      }
+      
+      if (y==2) {
+        if (sp >= 1){
+          if (skills[0][1] < 5){
+            sp-=1;
+            skills[0][1]++;
+            str+=1;
+            System.out.println("You practiced smashing your head into things. Your head is starting to hurt but now you have a "+4*skills[0][1]+"% chance to flinch enemies when you headbutt them! I suggest you lie down for a little while.");
+            System.out.println("Your faith to the Warrior lifestyle increased your Strength by 1!");
+          }
+          else
+            System.out.println("You have already maxed out this skill.");
+        }
+        else
+          System.out.println("You don't have enough Skill Points to purchase that.");
+      }
+      
+      if (skills[0][0]+skills[0][1] >= 5) {
+       if (y==3) {
+        if (sp >= 2){
+          if (skills[0][2] < 5){
+            sp-=2;
+            skills[0][2]++;
+            str+=4;
+            maxHP+=10;
+            hp+=10;
+            System.out.println("Your done with lifting small rocks. You find some large boulders and start juggling them. Woah. That's actually really impressive. Your Strength increases by 2! Your Max Health increases by 10!");
+            System.out.println("Your faith to the Warrior lifestyle increased your Strength by 2!");
+          }
+          else
+            System.out.println("You have already maxed out this skill.");
+        }
+        else
+          System.out.println("You don't have enough Skill Points to purchase that.");
+       }
+      }
+      
+      if (skills[0][0]+skills[0][1] >= 5) {
+       if (y==4) {
+        if (sp >= 2){
+          if (skills[0][3] < 5){
+            sp-=2;
+            skills[0][3]++;
+            str+=2;
+            System.out.println("The Warrior lifestyle can be summed up in two words: Brute Force. Who cares about silly elemental type matchups? Not you! All non-elemental weapons now deal "+10*skills[0][3]+"% more damage.");
+            System.out.println("Your faith to the Warrior lifestyle increased your Strength by 2!");
+          }
+          else
+            System.out.println("You have already maxed out this skill.");
+        }
+        else
+          System.out.println("You don't have enough Skill Points to purchase that.");
+       }
+      }
+      
+      if (skills[0][2]+skills[0][3] >= 5) {
+       if (y==5) {
+        if (sp >= 3){
+          if (skills[0][4] < 5){
+            sp-=3;
+            skills[0][4]++;
+            str+=8;
+            maxHP+=50;
+            hp+=50;
+            System.out.println("Juggling boulders? Pff, that's nothing you say. Although I thought that was impressive so I am VERY interested in what you are going to do now. What is that? You are gonna move a mountain?! No. No one ca-... Woah.");
+            System.out.println("Your Strength increased by 5! Your Max Health increased by 50!");
+            System.out.println("Your faith to the Warrior lifestyle increased your Strength by 3!");
+          }
+          else
+            System.out.println("You have already maxed out this skill.");
+        }
+        else
+          System.out.println("You don't have enough Skill Points to purchase that.");
+       }
+      }
+      
+      if (skills[0][4] >= 5){
+        if (y==6){
+          if (sp >= 4){
+            if (skills[0][5] < 5){
+              sp-=4;
+              skills[0][5]++;
+              str+=4;
+              System.out.println("Taking damage is frustrating, isn't it? Well new it's time to put that frustration to good use. From now on for each 10% of max Health you lose the damage of your normal attacks will increase by "+4*skills[0][5]+"%. Go give those baddies a taste of their own medicine.");
+              System.out.println("Your faith to the Warrior lifestyle increased your Strength by 4!");
+            }
+            else
+              System.out.println("You have already maxed out this skill.");
+          }
+          else
+            System.out.println("You don't have enough Skill Points to purchase that.");
+        }
+      }
+      
+    }
+    
+    if (x==2){ //Paladin
+      System.out.println("Skill Points: "+sp+"\nPaladin Tree - Strength Stat");
+      System.out.println("Enter the number of the skill you would like to purchase. Enter any other number to go back to the Skill Tree selection.");
+      System.out.println("Tier One Skills\n  1-Endurance Training("+skills[1][0]+"): Increase Health by 10\n  2-Prayer("+skills[1][1]+"): (Active)Pray for protection which negates damage 1% of the time");
+      if (skills[1][0]+skills[1][1] >= 5){
+        System.out.println("Tier Two Skills\n  3-Serious Endurance Training("+skills[1][2]+"): Increase Health by 20 and Strength by 1\n  4-Divine Blessing("+skills[1][3]+"): Regeneration increased by 2%");
+      }
+      if (skills[1][2]+skills[1][3] >= 5)
+        System.out.println("Tier Three Skill\n  5-ULTIMATE Endurance Training("+skills[1][4]+"): Increases Health by 50 and Strength by 3");
+      if (skills[1][4] >= 5)
+        System.out.println("Tier Four Skill\n  6-Divine Providence("+skills[1][5]+"): For every 10% Health lost damage is reduced by 2%");
+      y=scan.nextInt();
+      
+      if (y==1) {
+        if (sp >= 1){
+          if (skills[1][0] < 5){
+            sp-=1;
+            skills[1][0]++;
+            str+=1;
+            maxHP+=10;
+            hp+=10;
+            System.out.println("You train your endurance through running long distances and lifting heavy objects for a long time. Your Max Health increased by 10!\nYour faith to the Paladin lifestyle increased your Strength by 1!");
+          }
+          else
+            System.out.println("You have already maxed out this skill.");
+        }
+        else
+          System.out.println("You don't have enough Skill Points to purchase that.");
+      }
+      
+      if (y==2) {
+        if (sp >= 1){
+          if (skills[1][1] < 5){
+            sp-=1;
+            skills[1][1]++;
+            str+=1;
+            System.out.println("The gods watch over all their subjects and answer them when they call for help. You may now pray in battle and during that battle have a "+skills[1][1]*1+"% chance to be protected from damage.\nYour faith to the Paladin lifestyle increased your Strength by 1!");
+          }
+          else
+            System.out.println("You have already maxed out this skill.");
+        }
+        else
+          System.out.println("You don't have enough Skill Points to purchase that.");
+      }
+      
+      if (skills[1][0]+skills[1][1] >= 5) {
+       if (y==3) {
+        if (sp >= 2){
+          if (skills[1][2] < 5){
+            sp-=2;
+            skills[1][2]++;
+            str+=3;
+            maxHP+=25;
+            hp+=25;
+            System.out.print("To prove your faith to the gods you must increase the difficulty of your training. You begin to train by falling down rocky surfaces and walking over hot coals. It hurts (a lot by the looks of it) but the gods should now by proud of you. Hopefully.");
+            System.out.println("You increased your Max Health by 25 and your Strength by 2!\nYour faith to the Paladin lifestyle increased your Strength by 2!");
+          }
+          else
+            System.out.println("You have already maxed out this skill.");
+        }
+        else
+          System.out.println("You don't have enough Skill Points to purchase that.");
+       }
+      }
+      
+      if (skills[1][0]+skills[1][1] >= 5) {
+       if (y==4) {
+        if (sp >= 2){
+          if (skills[1][3] < 5){
+            sp-=2;
+            skills[1][3]++;
+            str+=2;
+            regen+=2;
+            System.out.print("The gods are pleased with your faith to them and bestow a blessing of regeneration upon you. ");
+            System.out.println("Your regeneration increased by 2%!\nYour faith to the Paladin lifestyle increased your Strength by 2!");
+          }
+          else
+            System.out.println("You have already maxed out this skill.");
+        }
+        else
+          System.out.println("You don't have enough Skill Points to purchase that.");
+       }
+      }
+      
+      if (skills[1][2]+skills[1][3] >= 5) {
+       if (y==5) {
+        if (sp >= 3){
+          if (skills[1][4] < 5){
+            sp-=3;
+            skills[1][4]++;
+            str+=6;
+            maxHP+=50;
+            hp+=50;
+            System.out.print("The gods have been pleased with your training so far but you have decided to undergo the final test of faith. TO JUMP INTO A VOLCANO!!! So... uh, are you sure about this? Okay... I guess I can't stop you, being just a voice and all. ");
+            System.out.println("*sigh* it was nice knowing you "+name+". Well they're gone. Guess I'll have to find a new character who wants me to recount all their adventures to them. Wait, what is that? No way! Holy gods! How are you still alive?!?!");
+            System.out.println("You increased your Max Health by 50 and your Strength by 3!\nYour faith to the Paladin lifestyle increased your Strength by 3!");
+          }
+          else
+            System.out.println("You have already maxed out this skill.");
+        }
+        else
+          System.out.println("You don't have enough Skill Points to purchase that.");
+       }
+      }
+      
+      if (skills[1][4] >= 5){
+        if (y==6){
+          if (sp >= 4){
+            if (skills[1][5] < 5){
+              sp-=4;
+              skills[1][5]++;
+              str+=4;
+              System.out.println("Your ridiculous amount of faith in the gods has paid off and you will now constantly benefit from their protection. For every 10% of your max health lost you will have "+2*skills[1][5]+"% damage reduction. Now will you please stop jumping into volcanoes?");
+              System.out.println("Your faith to the Paladin lifestyle increased your Strength by 4!");
+            }
+            else
+              System.out.println("You have already maxed out this skill.");
+          }
+          else
+            System.out.println("You don't have enough Skill Points to purchase that.");
+        }
+      }
+      
+    }
+    
+    if (x==3){ //Assassin
+      System.out.println("Skill Points: "+sp+"\nAssassin Tree - Craftiness Stat");
+      System.out.println("Enter the number of the skill you would like to purchase. Enter any other number to go back to the Skill Tree selection.");
+      System.out.println("Tier One Skills\n  1-Stabbing Practice("+skills[2][0]+"): Increase Critical Chance by 0.5\n  2-Weaken Armor("+skills[2][1]+"): (Active)Weaken the enemy's armor increasing the damage they take by 10% for the battle");
+      if (skills[2][0]+skills[2][1] >= 5){
+        System.out.println("Tier Two Skills\n  3-Knife Throwing Practice("+skills[2][2]+"): Increase Critical Chance by 1.0 and Strength by 1\n  4-Moxie("+skills[2][3]+"): When you score a Critical Hit your Critical Multiplier increases by 0.2 for the battle.");
+      }
+      if (skills[2][2]+skills[2][3] >= 5)
+        System.out.println("Tier Three Skill\n  5-Blindfolded Knife Throwing("+skills[2][4]+"): Increases Critical Chance by 2.0 and Strength by 3");
+      if (skills[2][4] >= 5)
+        System.out.println("Tier Four Skill\n  6-Quick Draw("+skills[2][5]+"): Increases the chance for your normal attack to trigger twice by 20%");
+      y=scan.nextInt();
+      
+      if (y==1) {
+        if (sp >= 1){
+          if (skills[2][0] < 5){
+            sp-=1;
+            skills[2][0]++;
+            critChance+=0.5;
+            craft+=1;
+            System.out.println("You practice your stabbing on a straw dummy. You stab all the vulnerable places and increase you Critical Hit Chance by 0.5%!\nYour faith to the Assassin lifestyle increased your Craftiness by 1!");
+          }
+          else
+            System.out.println("You have already maxed out this skill.");
+        }
+        else
+          System.out.println("You don't have enough Skill Points to purchase that.");
+      }
+      
+      if (y==2) {
+        if (sp >= 1){
+          if (skills[2][1] < 5){
+            sp-=1;
+            skills[2][1]++;
+            craft+=1;
+            System.out.println("Armor can be really annoying when you are trying to stab someone. Now you can weaken your enemy's armor and cause them to take "+skills[2][1]*10+"% more damage for the rest of the battle!\nYour faith to the Assassin lifestyle increased your Craftiness by 1!");
+          }
+          else
+            System.out.println("You have already maxed out this skill.");
+        }
+        else
+          System.out.println("You don't have enough Skill Points to purchase that.");
+      }
+      
+      if (skills[2][0]+skills[2][1] >= 5) {
+       if (y==3) {
+        if (sp >= 2){
+          if (skills[2][2] < 5){
+            sp-=2;
+            skills[2][2]++;
+            craft+=2;
+            str+=1;
+            critChance+=1.0;
+            System.out.print("You can't get close to all enemies so you practice throwing your knives accurately and forcefully.");
+            System.out.println("You increased your Critical Hit Chance by 1.0 and your Strength by 1!\nYour faith to the Assassin lifestyle increased your Craftiness by 2!");
+          }
+          else
+            System.out.println("You have already maxed out this skill.");
+        }
+        else
+          System.out.println("You don't have enough Skill Points to purchase that.");
+       }
+      }
+      
+      if (skills[2][0]+skills[2][1] >= 5) {
+       if (y==4) {
+        if (sp >= 2){
+          if (skills[2][3] < 5){
+            sp-=2;
+            skills[2][3]++;
+            craft+=2;
+            System.out.println("You are very confident in your abilities and it shows in battle. Every time you score a Critical Hit your Multiplier will increase by "+0.2*skills[2][3]+"% until the end of the battle. You get Moxie kid. Ok, I'll stop calling you kid.");
+            System.out.println("Your faith to the Assassin lifestyle increased your Craftiness by 2!");
+          }
+          else
+            System.out.println("You have already maxed out this skill.");
+        }
+        else
+          System.out.println("You don't have enough Skill Points to purchase that.");
+       }
+      }
+      
+      if (skills[2][2]+skills[2][3] >= 5) {
+       if (y==5) {
+        if (sp >= 3){
+          if (skills[2][4] < 5){
+            sp-=3;
+            skills[2][4]++;
+            critChance+=2.0;
+            craft+=3;
+            str+=3;
+            System.out.print("Your training has made you incredibly accurate. You never miss a still target and rarely miss a moving one. Now you place a blindfold over your eyes and try to hit the vulnerable points on a dummy. I don't think you can do it. ");
+            System.out.println("It doesn't matter how accurate you are when you can't see where your throwing. You turn in a few circles. Now you definately won't be able to... You hit every one! How?!?!");
+            System.out.println("Your faith to the Assassin lifestyle increased your Craftiness by 3!");
+          }
+          else
+            System.out.println("You have already maxed out this skill.");
+        }
+        else
+          System.out.println("You don't have enough Skill Points to purchase that.");
+       }
+      }
+      
+      if (skills[2][4] >= 5){
+        if (y==6){
+          if (sp >= 4){
+            if (skills[2][5] < 5){
+              sp-=4;
+              skills[2][5]++;
+              craft+=4;
+              System.out.println("Your training has taught you how to draw a throw a knife in the blink of an eye. You now have a "+skills[2][5]*20+"% chance to squeeze in a second normal attack after the first one.");
+              System.out.println("Your faith to the Assassin lifestyle increased your Craftiness by 4!");
+            }
+            else
+              System.out.println("You have already maxed out this skill.");
+          }
+          else
+            System.out.println("You don't have enough Skill Points to purchase that.");
+        }
+      }
+      
+    }
+    
+    if (x==4){ //Tinkerer
+      System.out.println("Skill Points: "+sp+"\nTinkerer Tree - Craftiness Stat");
+      System.out.println("Enter the number of the skill you would like to purchase. Enter any other number to go back to the Skill Tree selection.");
+      System.out.println("Tier One Skills\n  1-Brainstorm("+skills[3][0]+"): Increase Craftiness by 1\n  2-Cannon Bot("+skills[3][1]+"): (Active)Create a Cannon Bot that attacks after you and deals 20% of your Craftiness plus between your level and twice your level in damage.");
+      if (skills[3][0]+skills[3][1] >= 5)
+        System.out.println("Tier Two Skills\n  3-Tinker("+skills[3][2]+"): Increase Craftiness by 2 and Critical Chance by 0.5\n  4-Medic Bot("+skills[3][3]+"): (Active)Create a Medic Bot that heals 2% of your Max Health at the end of your turn.");
+      if (skills[3][2]+skills[3][3] >= 5)
+        System.out.println("Tier Three Skill\n  5-Invent("+skills[3][4]+"): Increases Craftiness by 5 and Critical Chance by 1.0");
+      if (skills[3][4] >= 5)
+        System.out.println("Tier Four Skill\n  6-Fortress Bot("+skills[3][5]+"): (Active)Create a Fortress Bot that blocks 3% of attacks.");
+      y=scan.nextInt();
+      
+      if (y==1) {
+        if (sp >= 1){
+          if (skills[3][0] < 5){
+            sp-=1;
+            skills[3][0]++;
+            craft+=2;
+            System.out.println("You brainstorm ideas for a new invention. You increased your Craftiness by 1!\nYour faith to the Tinkerer lifestyle increased your Craftiness by 1!");
+          }
+          else
+            System.out.println("You have already maxed out this skill.");
+        }
+        else
+          System.out.println("You don't have enough Skill Points to purchase that.");
+      }
+      
+      if (y==2) {
+        if (sp >= 1){
+          if (skills[3][1] < 5){
+            sp-=1;
+            skills[3][1]++;
+            craft+=1;
+            System.out.println("Have you ever thought that attacking wasn't worth the effort? Well now you don't have to! You can now create a Cannon Bot which will attack after you and deal "+20*skills[3][1]+"% of your Craftiness plus between your level in damage!\nYour faith to the Tinkerer lifestyle increased your Craftiness by 1!");
+          }
+          else
+            System.out.println("You have already maxed out this skill.");
+        }
+        else
+          System.out.println("You don't have enough Skill Points to purchase that.");
+      }
+      
+      if (skills[3][0]+skills[3][1] >= 5) {
+       if (y==3) {
+        if (sp >= 2){
+          if (skills[3][2] < 5){
+            sp-=2;
+            skills[3][2]++;
+            craft+=4;
+            critChance+=0.5;
+            System.out.print("You've thought of a few ideas and now you decide to try some of them out. What are you doing with that thing? Oh. Ok. I guess I'll leave you to your work. Humph.");
+            System.out.println("You increased your Critical Hit Chance by 0.5 and your Craftiness by 2!\nYour faith to the Tinkerer lifestyle increased your Craftiness by 2!");
+          }
+          else
+            System.out.println("You have already maxed out this skill.");
+        }
+        else
+          System.out.println("You don't have enough Skill Points to purchase that.");
+       }
+      }
+      
+      if (skills[3][0]+skills[3][1] >= 5) {
+       if (y==4) {
+        if (sp >= 2){
+          if (skills[3][3] < 5){
+            sp-=2;
+            skills[3][3]++;
+            craft+=2;
+            System.out.print("That Cannon Bot was cool but Medic Bot is much more practical. Fall and scrape your knee? Medic Bot! Arrow stuck in your leg? Medic Bot! Need to kill the jerk that shot that arrow? ");
+            System.out.println("Well maybe Cannon Bot would be better for that, but Medic Bot will now heal you for "+2*skills[3][3]+"% of your Max Health at the end of your turn.");
+            System.out.println("Your faith to the Tinkerer lifestyle increased your Craftiness by 2!");
+          }
+          else
+            System.out.println("You have already maxed out this skill.");
+        }
+        else
+          System.out.println("You don't have enough Skill Points to purchase that.");
+       }
+      }
+      
+      if (skills[3][2]+skills[3][3] >= 5) {
+       if (y==5) {
+        if (sp >= 3){
+          if (skills[3][4] < 5){
+            sp-=3;
+            skills[3][4]++;
+            critChance+=1.0;
+            craft+=8;
+            System.out.print("You've explored the possibilities that your mind presented and now you know which contraption you're going to build. I guess I'll just sit out here. Wait I can't sit, I'm only a voice. I guess I'll just, um, exist outside while I wait. ");
+            System.out.println("Your Craftiness increased by 5 and your Critical Hit Chance increased by 1.0%!\nYour faith to the Tinkerer lifestyle increased your Craftiness by 3!");
+          }
+          else
+            System.out.println("You have already maxed out this skill.");
+        }
+        else
+          System.out.println("You don't have enough Skill Points to purchase that.");
+       }
+      }
+      
+      if (skills[3][4] >= 5){
+        if (y==6){
+          if (sp >= 4){
+            if (skills[3][5] < 5){
+              sp-=4;
+              skills[3][5]++;
+              craft+=4;
+              System.out.print("Well technology can certainly do some amazing things. You can make robots that attack for you and heal all your wounds. If only you could make one that stops you from taking damage entirely. Hmm? You'll work on it? ");
+              System.out.println("Now you can create a Fortress Bot that will block "+skills[3][5]*3+"% of attacks.");
+              System.out.println("Your faith to the Tinkerer lifestyle increased your Craftiness by 4!");
+            }
+            else
+              System.out.println("You have already maxed out this skill.");
+          }
+          else
+            System.out.println("You don't have enough Skill Points to purchase that.");
+        }
+      }
+      
+    }
+    
+    if (x==5){ //Sorcerer
+      System.out.println("Skill Points: "+sp+"\nSorcerer Tree - Focus Stat");
+      System.out.println("Enter the number of the skill you would like to purchase. Enter any other number to go back to the Skill Tree selection.");
+      System.out.println("Tier One Skills\n  1-Study("+skills[4][0]+"): Increase Focus by 1\n  2-Fireball("+skills[4][1]+"): (Active)Fire spell that does between your level and twice your level in damage and lights the ground underneath the enemy on fire, dealing 2% of their Max Health at the end of the turn.");
+      if (skills[4][0]+skills[4][1] >= 5)
+        System.out.println("Tier Two Skills\n  3-Meditate("+skills[4][2]+"): Increase Focus by 3\n  4-Ice Spear("+skills[4][3]+"): (Active)Ice spell that does between your level and twice your level in damage and has a 2% chance to freeze the enemy for the turn.");
+      if (skills[4][2]+skills[4][3] >= 5)
+        System.out.println("Tier Three Skill\n  5-Conjure("+skills[4][4]+"): Increases Focus by 8");
+      if (skills[4][4] >= 5)
+        System.out.println("Tier Four Skill\n  6-Vine Tangle("+skills[4][5]+"): (Active)Earth spell that does between your level and twice your level in damage and heals you for 5% of the damage done.");
+      y=scan.nextInt();
+      
+      if (y==1) {
+        if (sp >= 1){
+          if (skills[4][0] < 5){
+            sp-=1;
+            skills[4][0]++;
+            focus+=2;
+            System.out.println("You spend an afternoon in a library, studying ancient books filled with magical knowledge. Well you read some of them because most of those ancient books are in another language that you don't know. You increased your Focus by 1!\nYour faith to the Sorcerer lifestyle increased your Focus by 1!");
+          }
+          else
+            System.out.println("You have already maxed out this skill.");
+        }
+        else
+          System.out.println("You don't have enough Skill Points to purchase that.");
+      }
+      
+      if (y==2) {
+        if (sp >= 1){
+          if (skills[4][1] < 5){
+            sp-=1;
+            skills[4][1]++;
+            focus+=1;
+            System.out.println("A spell for all of those destructive people out there, this Fireball will not only damage your oponnent but also light the ground underneath them on fire! Fireball deals between your level and twice your level in damage and deals "+skills[4][1]*2+"% of their Max Health in damage at the end of every turn!\nYour faith to the Sorcerer lifestyle increased your Focus by 1!");
+          }
+          else
+            System.out.println("You have already maxed out this skill.");
+        }
+        else
+          System.out.println("You don't have enough Skill Points to purchase that.");
+      }
+      
+      if (skills[4][0]+skills[4][1] >= 5) {
+       if (y==3) {
+        if (sp >= 2){
+          if (skills[4][2] < 5){
+            sp-=2;
+            skills[4][2]++;
+            focus+=5;
+            System.out.print("Focus is an important part of using magic and meditation is one of the best ways to sharpen a young mage's mind. You sit down and don't move for an hour... two hours... four hours... If I was actually alive I would fall asleep, but I can't. Because I'm just a voice. *sigh*");
+            System.out.println("Your Focus increased by 3!\nYour faith to the Sorcerer lifestyle increased your Focus by 2!");
+          }
+          else
+            System.out.println("You have already maxed out this skill.");
+        }
+        else
+          System.out.println("You don't have enough Skill Points to purchase that.");
+       }
+      }
+      
+      if (skills[4][0]+skills[4][1] >= 5) {
+       if (y==4) {
+        if (sp >= 2){
+          if (skills[4][3] < 5){
+            sp-=2;
+            skills[4][3]++;
+            focus+=2;
+            System.out.println("FREEZE!!! Sorry, not you. Your enemies! With Ice Spike you can stop your enemies in their tracks! This Ice spell does your level to twice your level in damage and has a "+skills[4][3]*2+"% chance to freeze the enemy for the turn.");
+            System.out.println("Your faith to the Sorcerer lifestyle increased your Focus by 2!");
+          }
+          else
+            System.out.println("You have already maxed out this skill.");
+        }
+        else
+          System.out.println("You don't have enough Skill Points to purchase that.");
+       }
+      }
+      
+      if (skills[4][2]+skills[4][3] >= 5) {
+       if (y==5) {
+        if (sp >= 3){
+          if (skills[4][4] < 5){
+            sp-=3;
+            skills[4][4]++;
+            focus+=11;
+            System.out.print("Practice makes perfect and the best way to practice magic without an enemy to fight is by conjuring things. You have'nt conjured too many things so maybe start small... Nevermind. That's an elephant. I guess you know what you're doing, huh? ");
+            System.out.println("Your Focus increased by 8!\nYour faith to the Sorcerer lifestyle increased your Focus by 3!");
+          }
+          else
+            System.out.println("You have already maxed out this skill.");
+        }
+        else
+          System.out.println("You don't have enough Skill Points to purchase that.");
+       }
+      }
+      
+      if (skills[4][4] >= 5){
+        if (y==6){
+          if (sp >= 4){
+            if (skills[4][5] < 5){
+              sp-=4;
+              skills[4][5]++;
+              focus+=4;
+              System.out.println("Taking a turn to heal yourself instead of attacking can be annoying, but with Vine Tangle you can do both at once! This Earth spell will deal damage that ranges from your level to twice your level and will heal you for "+skills[4][5]*5+"% of the damage done!");
+              System.out.println("Your faith to the Sorcerer lifestyle increased your Focus by 4!");
+            }
+            else
+              System.out.println("You have already maxed out this skill.");
+          }
+          else
+            System.out.println("You don't have enough Skill Points to purchase that.");
+        }
+      }
+      
+    }
+    
+    if (x==6){
+      System.out.println("Skill Points: "+sp+"\nDruid Tree - Focus Stat");
+      System.out.println("Enter the number of the skill you would like to purchase. Enter any other number to go back to the Skill Tree selection.");
+      System.out.println("Tier One Skills\n  1-Observe Nature("+skills[5][0]+"): Increase Health by 10\n  2-Synthesis("+skills[5][1]+"): (Active)Heals 10% of your Max Health.");
+      if (skills[5][0]+skills[5][1] >= 5)
+        System.out.println("Tier Two Skills\n  3-Gardening("+skills[5][2]+"): Increase Health by 25 and Regeneration by 1%\n  4-Thorns("+skills[5][3]+"): (Active)Cover yourself in thorns that returns 10% of damage taken from attacks.");
+      if (skills[5][2]+skills[5][3] >= 5)
+        System.out.println("Tier Three Skill\n  5-Hug Trees("+skills[5][4]+"): Increases Health by 50 and Regeneration by 2%");
+      if (skills[5][4] >= 5)
+        System.out.println("Tier Four Skill\n  6-Bark Skin("+skills[5][5]+"): (Active)Increase your health by 20% for the rest of the battle.");
+      y=scan.nextInt();
+      
+      if (y==1) {
+        if (sp >= 1){
+          if (skills[5][0] < 5){
+            sp-=1;
+            skills[5][0]++;
+            focus+=1;
+            maxHP+=10;
+            hp+=10;
+            System.out.println("You take a walk through the forest and observe Nature. You observe how the plants have grown, how the monkeys leap through the trees, and how the bugs crawl across the leaves. You increased your Max Health by 10!\nYour faith to the Druid lifestyle increased your Focus by 1!");
+          }
+          else
+            System.out.println("You have already maxed out this skill.");
+        }
+        else
+          System.out.println("You don't have enough Skill Points to purchase that.");
+      }
+      
+      if (y==2) {
+        if (sp >= 1){
+          if (skills[5][1] < 5){
+            sp-=1;
+            skills[5][1]++;
+            focus+=1;
+            System.out.println("Plants can turn sunlight into energy and with the power of Nature on your side you can too! The Synthesis spell will now heal you for "+skills[5][1]*10+"% of your Max Health!\nYour faith to the Druid lifestyle increased your Focus by 1!");
+          }
+          else
+            System.out.println("You have already maxed out this skill.");
+        }
+        else
+          System.out.println("You don't have enough Skill Points to purchase that.");
+      }
+      
+      if (skills[5][0]+skills[5][1] >= 5) {
+       if (y==3) {
+        if (sp >= 2){
+          if (skills[5][2] < 5){
+            sp-=2;
+            skills[5][2]++;
+            focus+=2;
+            maxHP+=25;
+            hp+=25;
+            regen+=1;
+            System.out.print("Gardening can be an amazing way to observe and bond with Nature. You use magic to help the plants grow and relocate the weeds outside your garden.");
+            System.out.println("You increased your Max Health by 25 and your Regeneration by 1%!\nYour faith to the Druid lifestyle increased your Focus by 2!");
+          }
+          else
+            System.out.println("You have already maxed out this skill.");
+        }
+        else
+          System.out.println("You don't have enough Skill Points to purchase that.");
+       }
+      }
+      
+      if (skills[5][0]+skills[5][1] >= 5) {
+       if (y==4) {
+        if (sp >= 2){
+          if (skills[5][3] < 5){
+            sp-=2;
+            skills[5][3]++;
+            focus+=2;
+            System.out.println("Nature usually doesn't fight directly but it finds many ways to deter enemies. You can now grow thorns that will damage enemies for "+skills[5][3]*10+"% of their Max Health when they attack you.");
+            System.out.println("Your faith to the Druid lifestyle increased your Focus by 2!");
+          }
+          else
+            System.out.println("You have already maxed out this skill.");
+        }
+        else
+          System.out.println("You don't have enough Skill Points to purchase that.");
+       }
+      }
+      
+      if (skills[5][2]+skills[5][3] >= 5) {
+       if (y==5) {
+        if (sp >= 3){
+          if (skills[5][4] < 5){
+            sp-=3;
+            skills[5][4]++;
+            focus+=3;
+            maxHP+=50;
+            hp+=50;
+            regen+=2;
+            System.out.print("You truely love Nature and all it has done for you. You wrap your arms around a tree and give it a big warm hug. Tree Hugger. Hey! That was meant as a compliment! ");
+            System.out.println("You increased your Max Health by 50 and your Regeneration by 2!\nYour faith to the Druid lifestyle increased your Focus by 3!");
+          }
+          else
+            System.out.println("You have already maxed out this skill.");
+        }
+        else
+          System.out.println("You don't have enough Skill Points to purchase that.");
+       }
+      }
+      
+      if (skills[5][4] >= 5){
+        if (y==6){
+          if (sp >= 4){
+            if (skills[5][5] < 5){
+              sp-=4;
+              skills[5][5]++;
+              focus+=4;
+              System.out.println("The time you have spent with Nature has created an unbreakable bond between you and the Earth. You are now able to turn your skin into tree bark which increases your Max Health by "+skills[5][5]*20+"% until the end of the battle.");
+              System.out.println("Your faith to the Druid lifestyle increased your Focus by 4!");
+            }
+            else
+              System.out.println("You have already maxed out this skill.");
+          }
+          else
+            System.out.println("You don't have enough Skill Points to purchase that.");
+        }
+      }
+      
+    }
+    
+   }
+  }
+  
+  public void inventory(){
+    while (true){
+      if (inventory.size()==0){ //Empty
+        System.out.println("You have no items in your inventory");
+        break;
+      }
+      System.out.println("Entering an item's number will show you information about the item. Once there enter 0 to return to the inventory, 1 to use or equip the item, or 2 to leave the item behind. Dropping stacked items removes the whole stack.");
+      System.out.println("Enter 0 to return to the player menu.");
+      for (int i=0; i < inventory.size(); i++){ //Print
+        System.out.println(i+1+"-"+inventory.get(i).getName()); 
+      }
+      int x=scan.nextInt();
+      if (x==0) //Choice in inventory
+        break;
+      if (x > inventory.size()){
+        continue;
+      }
+      System.out.println(inventory.get(x-1)+"\n"); //Item info
+      System.out.println("1-Equip or Use\n2-Drop Item");
+      int y=scan.nextInt();
+      
+      if (y==1){ //Checking for equipable
+        if (inventory.get(x-1).getPurpose()==0){
+          if (inventory.get(x-1).getClass() == weapon.getClass()){
+            Weapon hold=(Weapon)inventory.get(x-1);
+            System.out.println("You equipped the "+hold.getName()+" and put the "+weapon.getName()+" in your inventory.");
+            inventory.set(x-1, unequipWeapon());
+            equip(hold);
+          }
+          if (inventory.get(x-1).getClass() == artifact.getClass()){
+            Artifact hold=(Artifact)inventory.get(x-1);
+            System.out.println("You equipped the "+hold.getName()+" and put the "+artifact.getName()+" in your inventory.");
+            inventory.set(x-1, unequipWeapon());
+            equip(hold);
+          }
+          if (inventory.get(x-1).getClass() == scroll.getClass()){
+            Scroll hold=(Scroll)inventory.get(x-1);
+            System.out.println("You equipped the "+hold.getName()+" and put the "+scroll.getName()+" in your inventory.");
+            inventory.set(x-1, unequipWeapon());
+            equip(hold);
+          }
+          if (inventory.get(x-1).getClass() == armor.getClass()){
+            Armor hold=(Armor)inventory.get(x-1);
+            System.out.println("You equipped the "+hold.getName()+" and put the "+armor.getName()+" in your inventory.");
+            inventory.set(x-1, unequipWeapon());
+            equip(hold);
+          }
+        }
+        
+        else if (inventory.get(x-1).getPurpose()==1){
+          if (hp==maxHP){
+            System.out.println("You are already fully healed!");
+            continue;
+          }
+          System.out.println("You healed yourself for "+heal(inventory.get(x-1).getValue()));
+          removeItem(x-1);
+        }
+        
+        else {
+          System.out.println("You can't use that item outside of battle.");
+        }
+      }
+      if (y==2){ //Remove item
+        System.out.println("You left the "+inventory.get(x-1).getName()+" behind. Don't need you anymore Mr. Item!");
+        inventory.remove(x-1);
+      }
+      
+    }
+  }
+  
+  public void activeQuests(){
+    System.out.println("Active Quests\n-------------");
+    if (quests[0]==1)
+      System.out.println("Speak with King Parlin");
+    if (quests[1]==1)
+      System.out.println("Complete one of the Champion tests at the Training Grounds");
+    if (quests[2]==1)
+      System.out.println("Fight creatures in the Plain Plains until you reach level 3 then return to Parlin");
+    if (quests[3]==1)
+      System.out.println("Remove the bandit camp in the Plain Plains");
+    if (quests[4]==1){
+      System.out.println("Search the Shadow Forest for the bandits that escaped");
+    }
+    System.out.println("\nEnter any number to continue");
+    scan.nextInt();
+  }
+  
+  public void playerMenu(){
+   while (true){
+    System.out.println("0-Exit\n1-Player Stats\n2-Equipment Stats\n3-Inventory\n4-Skill Tree\n5-Quests");
+    int x=scan.nextInt();
+    if (x==0)
+      break;
+    if (x==1) { //Player Stats
+      System.out.println(toString()+"\nEnter any number to continue");
+      scan.nextInt();
+    }
+    if (x==2) { //Equipment
+      System.out.println("Weapon\n------\n"+weapon+"\n");
+      System.out.println("Artifact\n--------\n"+artifact+"\n");
+      System.out.println("Scroll\n------\n"+scroll+"\n");
+      System.out.println("Armor\n-----\n"+armor+"\nEnter any number to continue");
+      scan.nextInt();
+    }
+    if (x==3){ //Inventory
+      inventory();
+    }
+    if (x==4) { //Skill Tree
+      skillTree();
+    }
+    if (x==5) { //Quests
+      activeQuests();
+    }
+   }
+  }
+  
+  public String toString(){
+    String stats="Player Statistics - All stats take into account the player's gear";
+    stats+="\nName: "+name;
+    stats+="\nMax Health: "+maxHP;
+    stats+="\nCurrent Health: "+hp;
+    stats+="\nRegeneration: "+regen;
+    stats+="\nStrength: "+str;
+    stats+="\nCraftiness: "+craft;
+    stats+="\nFocus: "+focus;
+    stats+="\nCritical Hit Chance: "+critChance+"%";
+    stats+="\nCritical Hit Damage Multiplier: "+critMult;
+    stats+="\n\nLevel: "+lv;
+    stats+="\nExperience Points: "+xp;
+    stats+="\nExperience Needed To Level Up: "+xpNeeded;
+    return stats;
+  }
+}
